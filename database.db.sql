@@ -1,4 +1,5 @@
 CREATE TABLE Companies (
+    ID INT PRIMARY KEY NOT NULL,
     Name TEXT NOT NULL,
     Owners TEXT,
     Revenue INT,
