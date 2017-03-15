@@ -1,3 +1,4 @@
+sqlite> .fullschema
 CREATE TABLE Companies (
     ID INT PRIMARY KEY NOT NULL,
     Name TEXT NOT NULL,

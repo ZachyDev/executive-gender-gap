@@ -1,6 +1,6 @@
 #!/usr/bin/python
 import sqlite3
-database="/Users/awise/Python/Scripts/testDB.db"
+database="/Users/awise/Python/Scripts/database.db"
 connection=sqlite3.connect(database)
 cursor=connection.execute("SELECT * FROM Companies")
 print "Content-type: text/html"
