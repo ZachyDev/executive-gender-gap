@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+
+<title>Welcome</title>
+<link rel="stylesheet" type="text/css" href="{{url_for('static',filename='style.css')}}">
+
+<h3> Forbes 50 </h3>
+<table>
+    <thead align = "left">
+        <th>Company</th>
+        <th>Rank</th>
+    </thead>
+
+    <tbody>
+
+        <!-- passing in list and iterating through it -->
+        {% for company in companyLinks %}
+            <tr>
+                <td> {{ company[0] }} </td>
+                <td> {{ company[2] }} </td>
+            </tr>
+        {% endfor %}
+
+    </tbody>
+</table>
