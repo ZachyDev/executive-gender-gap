@@ -13,12 +13,19 @@
     <tbody>
 
         <!-- passing in list and iterating through it -->
-        {% for company in companyLinks %}
+       <!--  {% for company in companyLinks %}
             <tr>
                 <td> {{ company[0] }} </td>
                 <td> {{ company[2] }} </td>
             </tr>
-        {% endfor %}
+        {% endfor %} -->
 
+        <!-- iterate through dictionary -->
+          {% for company,rank in companyDict.iteritems() %}
+            <tr>
+                <td> {{ company }} </td>
+                <td> {{ rank }} </td>
+            </tr>
+        {% endfor %}
     </tbody>
 </table>
