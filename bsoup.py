@@ -39,12 +39,12 @@ try:
         req = urllib2.Request( url, None, headers = { 'User-Agent' : 'Mozilla/5.0' })
         page = urllib2.urlopen(req).read()
         # soup = BeautifulSoup(page, "lxml")
+        
+         # grab data and convert to list of python dictionaries
         data = re.findall('var data = (.*?)\n', page, flags=0)[0]
-        # company = re.findall('<title>(.*?) -', page, re.MULTILINE| re.DOTALL|re.IGNORECASE)[0]
-      
         py_obj = demjson.decode(data);
-        # for i, current, name in enumerate(d['is_current', 'related_entity_name'] for d in py_obj): 
-            # print i,name, current
+
+        # grab executives if they are current and put them into list
         for d in py_obj:
             for key in d:
                 if d['is_current'] == True and d['is_executive']:
