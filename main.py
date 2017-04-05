@@ -8,6 +8,7 @@ import cgitb
 import os
 import urllib2
 import re
+import demjson
 
 cgitb.enable()
 
@@ -38,35 +39,35 @@ def index():
             rank = re.findall('"rank":(.*?),',page, flags=0)[i]
             companies.append(company)
             ranks.append(rank)
-            companyLinks.append([company,rank,link])
-            # companyDict = dict(zip(company,rank))
+            companyLinks.append([company,rank,link]) 
             # remove dupliates 
             #missing 24, 31, 37, 38, 42, 45, 
      
         companyDict = dict(zip(companies,ranks))
-        print(companyDict)
+        print(len(companyLinks))
     except urllib2.HTTPError, e:
         print e.fp.read()
 
     # use companyLinks from above to get current leaders from company page
-    # try:
-    #     for i in range(1):
-    #         # link for current board members 
-    #         url = "https://littlesis.org/entities/" + str(companyLinks[i][2]) + "/relationships#current=true&board=true"
-    #         req = urllib2.Request( url, None, headers = { 'User-Agent' : 'Mozilla/5.0' })
-    #         page = urllib2.urlopen(req).read()
-    #         # need to fix to get dictionary data
-    #         company = re.findall('<title>(.*?) -', page, re.MULTILINE| re.DOTALL|re.IGNORECASE)[0]
-    #         leadershipNames = re.findall('related_entity_name":"(.*?)"', page, flags=0)
-    #         personLinks = re.findall('related_entity_url":"/entities/(.*?)/', page,flags=0)
-    #         for link in personLinks:
-    #             newlink = link.replace('-', '/',1)
-    #             link = newlink
-    #         companies.append([company, personLinks])
-    #     # print(companies)
-    # except urllib2.HTTPError, e:
-    #     # print e.fp.read()
-    #     print('error')
+    try:
+        for i in range(1):
+            # link for current board members 
+            url = "https://littlesis.org/entities/" + str(companyLinks[i][2]) + "/relationships#current=true&board=true"
+            req = urllib2.Request( url, None, headers = { 'User-Agent' : 'Mozilla/5.0' })
+            page = urllib2.urlopen(req).read()
+            print(url)
+            # need to fix to get dictionary data
+            company = re.findall('<title>(.*?) -', page, re.MULTILINE| re.DOTALL|re.IGNORECASE)[0]
+            leadershipNames = re.findall('related_entity_name":"(.*?)"', page, flags=0)
+            personLinks = re.findall('related_entity_url":"/entities/(.*?)/', page,flags=0)
+            for link in personLinks:
+                newlink = link.replace('-', '/',1)
+                link = newlink
+            companies.append([company, personLinks])
+        # print(companies)
+    except urllib2.HTTPError, e:
+        # print e.fp.read()
+        print('error')
   
     return render_template("index.html", companyDict = companyDict)
 

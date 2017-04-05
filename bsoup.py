@@ -6,8 +6,7 @@ Using BeautifulSoup to scrape
 import urllib2
 import re
 from bs4 import BeautifulSoup
-
-
+import demjson
 
 # create array to add error pages
 errorPages = [] 
@@ -15,7 +14,10 @@ companyLinks = []
 companies = []
 leadershipNames = []
 personLinks = []
-# url for top 1000 Fortune Companies
+
+'''
+urls for top 100 companies
+'''
 url = "https://littlesis.org/lists/110-fortune-1000-companies-2010/members"
 req = urllib2.Request( url, None, headers = { 'User-Agent' : 'Mozilla/5.0' })
 page = urllib2.urlopen(req).read()
@@ -36,15 +38,23 @@ try:
         url = "https://littlesis.org/entities/" + str(companyLinks[i][2]) + "/relationships#current=true&board=true"
         req = urllib2.Request( url, None, headers = { 'User-Agent' : 'Mozilla/5.0' })
         page = urllib2.urlopen(req).read()
-        soup = BeautifulSoup(page, "lxml")
-        for link in soup.find_all('td'):
-            print(link)
+        # soup = BeautifulSoup(page, "lxml")
+        data = re.findall('var data = (.*?)\n', page, flags=0)[0]
         # company = re.findall('<title>(.*?) -', page, re.MULTILINE| re.DOTALL|re.IGNORECASE)[0]
-        
+      
+        py_obj = demjson.decode(data);
+        # for i, current, name in enumerate(d['is_current', 'related_entity_name'] for d in py_obj): 
+            # print i,name, current
+        for d in py_obj:
+            for key in d:
+                if d['is_current'] == True and d['is_executive']:
+                    leadershipNames.append(d['related_entity_name'])
+        leadershipNames = list(set(leadershipNames))
+        print(len(leadershipNames))
+        print(leadershipNames) 
 
 
-        # companies.append([company, personLinks])
-    # print(companies)
+     
 except urllib2.HTTPError, e:
     # print e.fp.read()
     print('error')
