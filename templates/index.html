@@ -1,31 +1,26 @@
 <!DOCTYPE html>
 
-<title>Welcome</title>
+<title>Executive Gender Gap</title>
 <link rel="stylesheet" type="text/css" href="{{url_for('static',filename='style.css')}}">
 
 <h3> Forbes 50 </h3>
 <table>
     <thead align = "left">
-        <th>Company</th>
-        <th>Rank</th>
+        <th>Name</th>
+        <th>Gender</th>
+       
     </thead>
 
     <tbody>
 
-        <!-- passing in list and iterating through it -->
-       <!--  {% for company in companyLinks %}
-            <tr>
-                <td> {{ company[0] }} </td>
-                <td> {{ company[2] }} </td>
-            </tr>
-        {% endfor %} -->
-
         <!-- iterate through dictionary -->
-          {% for company,rank in companyDict.iteritems() %}
+          {% for dict_item in leadersDict %}
             <tr>
-                <td> {{ company }} </td>
-                <td> {{ rank }} </td>
+                <td> {{ dict_item['name'] }} </td>
+                <td> {{ dict_item['gender'] }} </td>
+              
             </tr>
+            
         {% endfor %}
     </tbody>
 </table>
