@@ -8,6 +8,18 @@ import re
 from bs4 import BeautifulSoup
 import demjson
 import gender_guesser.detector as genderg
+import csv
+import sqlite3 as sql
+
+# conn = sql.connect('database.db')
+# print "Opened database successfully"
+
+# cur = conn.cursor()
+
+# cur.execute("""CREATE TABLE leaders(name text, link text, gender text)""")
+# cur.execute('DROP TABLE leaders')
+# print "Table deleted"
+# conn.close()
 
 def get_genders():
     # create array to add error pages
@@ -45,41 +57,38 @@ def get_genders():
              # grab data and convert to list of python dictionaries
             data = re.findall('var data = (.*?)\n', page, flags=0)[0]
             py_obj = demjson.decode(data);
-
-            leadersDict = {}
-            keys = ['Name', 'Link']
             
             '''
-            # grab executives and links if they are current and put them into list
+            # grab executives, links, and gender if they are current and put them into list
             '''
             for d in py_obj:
                 if d['is_current'] == True and d['is_executive']:
-                    leadershipNames.append(d['related_entity_name'])
+                    # leadershipNames.append(d['related_entity_name'])
                     personLinks.append(d['related_entity_url'][9:].replace('-', '/',1)) #grab link and edit for scraping
-            
-            leadersDict = [{'name':a, 'link':b} for a,b in zip(leadershipNames,personLinks)]      
-            
-            '''
-            Getting gender from personLinks and gender detector
-            '''
-            gDetector = genderg.Detector()
-            for d in leadersDict:
-                url = "https://littlesis.org/person" + d['link']
-                req = urllib2.Request(url, None, headers = {'User-Agent': 'Mozilla/5.0'})
-                page = urllib2.urlopen(req).read()
-                try:
-                    gender = re.findall('(Female|Male)',page, flags=0 )[0]
-                    d['gender'] = gender
-                except (urllib2.HTTPError, IndexError):
-                    gender = gDetector.get_gender(d['name'].split(' ')[0])
-                    # errorPages.append(d['link'])
-                    d['gender'] = gender
-            # print(errorPages)
-            return leadersDict
+                    name = d['related_entity_name']
+                    link = d['related_entity_url'][9:].replace('-', '/',1)
+                    url2 = "https://littlesis.org/person" + link
+                    req2 = urllib2.Request(url2, None, headers = {'User-Agent': 'Mozilla/5.0'})
+                    page2 = urllib2.urlopen(req2).read() 
+                    try:
+                        gender = re.findall('(Female|Male)',page, flags=0 )[0]
+                    except (urllib2.HTTPError, IndexError):
+                        gDetector = genderg.Detector()
+                        gender = gDetector.get_gender(name.split(' ')[0])
+                    try:
+                        with sql.connect('database.db') as con:
+                            cur = con.cursor()
+                            cur.execute("""INSERT INTO leaders (name,link,gender) VALUES (?,?,?)""",(name, link,gender))
+                            con.commit()
+                    except:
+                        con.rollback()
+                        print "error in insert operation"
+                    finally:
+                        con.close()        
     except urllib2.HTTPError, e:
         # print e.fp.read()
         print('error')
 
-# if __name__ == "__main__":
-#     leadersDict2 = get_genders()
-#     print(leadersDict2)
+if __name__ == "__main__":
+    leadersDict2 = get_genders()
+    

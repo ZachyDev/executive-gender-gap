@@ -10,6 +10,7 @@ import urllib2
 import re
 import demjson
 from getGenders import get_genders
+import sqlite3 as sql
 
 cgitb.enable()
 
@@ -21,6 +22,17 @@ def index():
 
     leadersDict = get_genders()
     return render_template("index.html", leadersDict = leadersDict)
+
+@app.route('/list')
+def list():
+   con = sql.connect("database.db")
+   con.row_factory = sql.Row
+   
+   cur = con.cursor()
+   cur.execute("select * from leaders")
+   
+   rows = cur.fetchall();
+   return render_template("list.html", rows = rows)
 
 if __name__ == "__main__": #only start web server if this file is called directly  
     port = int(os.environ.get('PORT', 5000)) 
