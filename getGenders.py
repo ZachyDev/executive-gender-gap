@@ -8,7 +8,6 @@ import re
 from bs4 import BeautifulSoup
 import demjson
 import gender_guesser.detector as genderg
-import csv
 import sqlite3 as sql
 
 # conn = sql.connect('database.db')
