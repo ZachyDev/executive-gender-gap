@@ -9,7 +9,7 @@ import os
 import urllib2
 import re
 import demjson
-from getGenders import get_genders
+# from getGenders import get_genders
 import sqlite3 as sql
 
 cgitb.enable()
@@ -19,9 +19,15 @@ app = Flask(__name__)
 # routing/mapping a url on website to a python function 
 @app.route('/') #root directory, home page of website, called a decorator
 def index():
-
-    leadersDict = get_genders()
-    return render_template("index.html", leadersDict = leadersDict)
+  con = sql.connect("database.db")
+  con.row_factory = sql.Row
+   
+  cur = con.cursor()
+  cur.execute("SELECT DISTINCT * from leaders")
+   
+  rows = cur.fetchall();
+  print type(rows)
+  return render_template("index.html", rows = rows)
 
 @app.route('/list')
 def list():
@@ -29,7 +35,8 @@ def list():
    con.row_factory = sql.Row
    
    cur = con.cursor()
-   cur.execute("select * from leaders")
+
+   cur.execute("SELECT DISTINCT * FROM leaders")
    
    rows = cur.fetchall();
    return render_template("list.html", rows = rows)

@@ -14,9 +14,9 @@ conn = sql.connect('database.db')
 print "Opened database successfully"
 
 cur = conn.cursor()
-
-cur.execute("""CREATE TABLE IF NOT EXISTS leaders(company text, name text, link text, gender text)""")
 # cur.execute('DROP TABLE leaders')
+#
+cur.execute("""CREATE TABLE IF NOT EXISTS leaders(company text, name text, link text, gender text)""")
 print "Table created"
 conn.close()
 
@@ -48,7 +48,7 @@ def get_genders():
     use companyLinks from above to get current leaders and gender from each company page
     '''
     try:
-        for i in range(1):
+        for i in range(2,10):
             url = "https://littlesis.org/entities/" + str(companyLinks[i][2]) + "/relationships#current=true&board=true"
             req = urllib2.Request( url, None, headers = { 'User-Agent' : 'Mozilla/5.0' })
             page = urllib2.urlopen(req).read()
@@ -75,7 +75,7 @@ def get_genders():
                         gender = re.findall('(Female|Male)',page2, flags=0 )[0]
                     except (urllib2.HTTPError, IndexError):
                         gDetector = genderg.Detector()
-                        gender = gDetector.get_gender(name.split(' ')[0])
+                        gender = gDetector.get_gender(name.split(' ')[0]).title()
                     try:
                         with sql.connect('database.db') as con:                            
                             cur = con.cursor()
