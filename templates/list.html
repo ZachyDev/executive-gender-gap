@@ -4,6 +4,7 @@
    
       <table border = 1>
          <thead>
+            <td>Company</td>
             <td>Name</td>
             <td>Link</td>
             <td>Gender</td>
@@ -11,6 +12,7 @@
          
          {% for row in rows %}
             <tr>
+               <td> {{row["company"]}}</td>
                <td>{{row["name"]}}</td>
                <td>{{row["link"]}}</td>
                <td> {{ row["gender"]}}</td>

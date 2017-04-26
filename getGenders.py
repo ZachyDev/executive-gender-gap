@@ -10,15 +10,15 @@ import demjson
 import gender_guesser.detector as genderg
 import sqlite3 as sql
 
-# conn = sql.connect('database.db')
-# print "Opened database successfully"
+conn = sql.connect('database.db')
+print "Opened database successfully"
 
-# cur = conn.cursor()
+cur = conn.cursor()
 
-# cur.execute("""CREATE TABLE leaders(name text, link text, gender text)""")
+cur.execute("""CREATE TABLE IF NOT EXISTS leaders(company text, name text, link text, gender text)""")
 # cur.execute('DROP TABLE leaders')
-# print "Table deleted"
-# conn.close()
+print "Table created"
+conn.close()
 
 def get_genders():
     # create array to add error pages
@@ -63,21 +63,23 @@ def get_genders():
             for d in py_obj:
                 if d['is_current'] == True and d['is_executive']:
                     # leadershipNames.append(d['related_entity_name'])
-                    personLinks.append(d['related_entity_url'][9:].replace('-', '/',1)) #grab link and edit for scraping
+                    # personLinks.append(d['related_entity_url'][9:].replace('-', '/',1)) #grab link and edit for scraping
                     name = d['related_entity_name']
-                    link = d['related_entity_url'][9:].replace('-', '/',1)
+                    link = d['related_entity_url'][9:-14].replace('-', '/',1)
+                    company = companyLinks[i][0]
                     url2 = "https://littlesis.org/person" + link
                     req2 = urllib2.Request(url2, None, headers = {'User-Agent': 'Mozilla/5.0'})
                     page2 = urllib2.urlopen(req2).read() 
+
                     try:
-                        gender = re.findall('(Female|Male)',page, flags=0 )[0]
+                        gender = re.findall('(Female|Male)',page2, flags=0 )[0]
                     except (urllib2.HTTPError, IndexError):
                         gDetector = genderg.Detector()
                         gender = gDetector.get_gender(name.split(' ')[0])
                     try:
-                        with sql.connect('database.db') as con:
+                        with sql.connect('database.db') as con:                            
                             cur = con.cursor()
-                            cur.execute("""INSERT INTO leaders (name,link,gender) VALUES (?,?,?)""",(name, link,gender))
+                            cur.execute("""INSERT INTO leaders (company, name,link,gender) VALUES (?,?,?,?)""",(company, name, link,gender))
                             con.commit()
                     except:
                         con.rollback()
