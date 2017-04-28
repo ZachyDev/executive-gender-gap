@@ -1,5 +1,7 @@
 """
-Using BeautifulSoup to scrape 
+Web scraping data and putting it into database
+Database must have 'end' as last row for frontend
+Replace Andy with Male
 
 """
 
@@ -11,6 +13,7 @@ import gender_guesser.detector as genderg
 import sqlite3 as sql
 import csv
 
+
 conn = sql.connect('database.db')
 print "Opened database successfully"
 
@@ -18,8 +21,9 @@ cur = conn.cursor()
 # cur.execute('DROP TABLE leaders')
 #
 cur.execute("""CREATE TABLE IF NOT EXISTS leaders(company text, name text, link text, gender text)""")
-# cur.execute("INSERT INTO leaders (company, name,link,gender) VALUES (?,?,?,?)""",("end", "end", "end", "end"))
-cur.execute("UPDATE leaders SET gender = 'Male' WHERE gender='Andy'")
+cur.execute("INSERT INTO leaders (company, name,link,gender) VALUES (?,?,?,?)""",("end", "end", "end", "end"))
+# cur.execute("UPDATE leaders SET gender = 'Male' WHERE gender='Andy'")
+# cur.execute('DELETE FROM leaders WHERE name="end"')
 conn.commit()
 conn.close()
 print('insert executed')
@@ -39,7 +43,7 @@ def get_genders():
     page = urllib2.urlopen(req).read()
     try:
         # create array of companies   
-        for i in range(10):
+        for i in range(50):
             company = re.findall('"name":"(.*?)"', page, flags=0)[i]
             link = re.findall('"url":"/org/(.*?)/', page, flags=0)[i]
             rank = re.findall('"rank":(.*?),',page, flags=0)[i]
@@ -51,7 +55,7 @@ def get_genders():
     use companyLinks from above to get current leaders and gender from each company page
     '''
     try:
-        for i in range(2,10):
+        for i in range(31,50):
             url = "https://littlesis.org/entities/" + str(companyLinks[i][2]) + "/relationships#current=true&board=true"
             req = urllib2.Request( url, None, headers = { 'User-Agent' : 'Mozilla/5.0' })
             page = urllib2.urlopen(req).read()
@@ -82,7 +86,8 @@ def get_genders():
                     try:
                         with sql.connect('database.db') as con:                            
                             cur = con.cursor()
-                            # cur.execute("""INSERT INTO leaders (company, name,link,gender) VALUES (?,?,?,?)""",(company, name, link,gender))
+                            cur.execute("""INSERT INTO leaders (company, name,link,gender) VALUES (?,?,?,?)""",(company, name, link,gender))
+                            print('insert ' + company)
                             con.commit()
                     except:
                         con.rollback()

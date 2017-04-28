@@ -10,7 +10,7 @@ import urllib2
 import re
 import demjson
 import csv
-# from getGenders import get_genders
+from getGenders import get_genders
 import sqlite3 as sql
 
 cgitb.enable()
@@ -20,6 +20,7 @@ app = Flask(__name__)
 # routing/mapping a url on website to a python function 
 @app.route('/') #root directory, home page of website, called a decorator
 def index():
+  
   con = sql.connect("database.db")
   con.row_factory = sql.Row
    
@@ -27,7 +28,6 @@ def index():
 
   cur.execute("SELECT DISTINCT * from leaders")
   rows = cur.fetchall();
-  print(type(rows))
 
   return render_template("index.html", rows = rows)
 
