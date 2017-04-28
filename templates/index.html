@@ -31,7 +31,7 @@
 
     //bubbles needs very specific format, convert data to this.
     var nodes = bubble.nodes({children:data}).filter(function(d) { return !d.children; });
-    
+
     //setup the chart
     var bubbles = svg.append("g")
         .attr("transform", "translate(0,0)")
@@ -121,7 +121,7 @@
 </head>
 <body>
 
-<h3> Forbes 50 </h3>
+<h3> Percentage of Women in Executive Leadership </h3>
     <!--  <table border = 1>
          <thead>
             <td>Company</td>
