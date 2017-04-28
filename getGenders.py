@@ -9,6 +9,7 @@ from bs4 import BeautifulSoup
 import demjson
 import gender_guesser.detector as genderg
 import sqlite3 as sql
+import csv
 
 conn = sql.connect('database.db')
 print "Opened database successfully"
@@ -17,9 +18,11 @@ cur = conn.cursor()
 # cur.execute('DROP TABLE leaders')
 #
 cur.execute("""CREATE TABLE IF NOT EXISTS leaders(company text, name text, link text, gender text)""")
-print "Table created"
+# cur.execute("INSERT INTO leaders (company, name,link,gender) VALUES (?,?,?,?)""",("end", "end", "end", "end"))
+cur.execute("UPDATE leaders SET gender = 'Male' WHERE gender='Andy'")
+conn.commit()
 conn.close()
-
+print('insert executed')
 def get_genders():
     # create array to add error pages
     errorPages = [] 
@@ -79,7 +82,7 @@ def get_genders():
                     try:
                         with sql.connect('database.db') as con:                            
                             cur = con.cursor()
-                            cur.execute("""INSERT INTO leaders (company, name,link,gender) VALUES (?,?,?,?)""",(company, name, link,gender))
+                            # cur.execute("""INSERT INTO leaders (company, name,link,gender) VALUES (?,?,?,?)""",(company, name, link,gender))
                             con.commit()
                     except:
                         con.rollback()

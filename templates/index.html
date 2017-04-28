@@ -2,43 +2,127 @@
 <head>
 <title>Executive Gender Gap</title>
 <link rel="stylesheet" type="text/css" href="{{url_for('static',filename='style.css')}}">
-<script type="text/javascript" src="//code.jquery.com/jquery-1.4.2.min.js"></script>
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.8.0/d3.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min.js"></script>
 <script type="text/javascript" charset="utf-8">
     $(document).ready(function(){
-        getPercentages()
-      
+    var data= getPercentage()
+    var diameter = 500, //max size of the bubbles
+    color = d3.scale.category10(); //color category
 
+    var bubble = d3.layout.pack()
+        .sort(null)
+        .size([diameter, diameter])
+        .padding(1.5);
 
+    var svg = d3.select("body")
+        .append("svg")
+        .attr("width", diameter)
+        .attr("height", diameter)
+        .attr("class", "bubble");
+   
+    // Define the div for the tooltip
+    var div = d3.select("body").append("div")   
+        .attr("class", "tooltip")               
+        .style("opacity", 0);
+        
+    //convert numerical values from strings to numbers
+    data = data.map(function(d){ d.value = +d["percentage"]; return d; });
+
+    //bubbles needs very specific format, convert data to this.
+    var nodes = bubble.nodes({children:data}).filter(function(d) { return !d.children; });
+    
+    //setup the chart
+    var bubbles = svg.append("g")
+        .attr("transform", "translate(0,0)")
+        .selectAll(".bubble")
+        .data(nodes)
+        .enter();
+
+    //create the bubbles
+    bubbles.append("circle")
+        .attr("r", function(d){ return d.r; })
+        .attr("cx", function(d){ return d.x; })
+        .attr("cy", function(d){ return d.y; })
+        //mouseover hover box
+        .on('mouseover', function(d){
+            div.transition()        
+                .duration(100)      
+                .style("opacity", 1);      
+            div.html("Percentage: " + d.percentage + "<br>Men: " + d.men + "<br>Women: " + d.women)  
+                .style("left", (d3.event.pageX) + "px")     
+                .style("top", (d3.event.pageY - 28) + "px");    
+        })          
+        .on('mouseout', function(d){
+            div.transition()        
+                .duration(100)      
+                .style("opacity", 0);   
+        })
+        .style("fill", function(d) { return color(d.value); });
+
+    //format the text for each bubble
+    bubbles.append("text")
+        .attr("x", function(d){ return d.x; })
+        .attr("y", function(d){ return d.y + 5; })
+        .attr("text-anchor", "middle")
+        .text(function(d){ return d["company"]; })
+        .style({
+            "fill":"white", 
+            "font-family":"Helvetica Neue, Helvetica, Arial, san-serif",
+            "font-size": "12px"
+        });
+    
+    
     });
     
-    function getPercentages(){
+    function getPercentage(){
         var totalCount = 0;
         var menCount =0;
+        var company = '';
+        var previousCompany = 'Walmart';
         var womenCount = 0;
-        '{% for row in rows %}' 
-        '{% if row.company == "ConocoPhillips" %}'
+        var unknownCount = 0;
+        var companiesData = []
+    
+        //get male, female, and unknown count from SQL data
+        '{% for row in rows %}'
+            // console.log(company)
+            company = '{{row.company}}'
             totalCount += 1;    
             '{% if "Female" in row.gender %}'
                 womenCount += 1;
-            '{% endif %}'
-             '{% if "Male" in row.gender %}'
+            '{% elif "Male" in row.gender %}'
                 menCount += 1;
-             '{% endif %}'
-         '{% endif %}'
-         '{% endfor %}'
+            '{% else %}'
+                unknownCount += 1;
+            '{% endif %}'
 
-        console.log(totalCount, womenCount, menCount)
-        var percentage = Math.round(womenCount/totalCount * 100)
-        console.log(percentage + '%')
-    }
+            //put data into object array
+            if (company != previousCompany){
+                var percentage = Math.round(womenCount/totalCount * 100)
+                companiesData.push( {"company": previousCompany, "total": totalCount, "women": womenCount, "men": menCount, "unknown": unknownCount, "percentage": percentage})
+                totalCount = 0;
+                menCount = 0;
+                womenCount = 0
+                unknownCount = 0;
+            };
+            previousCompany = company
+         '{% endfor %}'
+        
+        // console.log(companiesData)
+        return companiesData         
+         // var jsonCompanies = JSON.stringify(companiesData)
+         // console.log(jsonCompanies)
+         // return jsonCompanies
+        
+    };
 </script>
 
 </head>
 <body>
 
 <h3> Forbes 50 </h3>
-     <table border = 1>
+    <!--  <table border = 1>
          <thead>
             <td>Company</td>
             <td>Name</td>
@@ -47,15 +131,13 @@
          </thead>
          
          {% for row in rows %}
-         {% if row.company == 'ConocoPhillips' %}
             <tr>
                <td> {{row["company"]}}</td>
                <td>{{row["name"]}}</td>
                <td>{{row["link"]}}</td>
                <td> {{ row["gender"]}}</td>
             </tr>
-         {% endif %}
          {% endfor %}
-      </table>
+      </table> -->
 
 </body>

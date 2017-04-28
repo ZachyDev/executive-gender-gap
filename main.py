@@ -9,6 +9,7 @@ import os
 import urllib2
 import re
 import demjson
+import csv
 # from getGenders import get_genders
 import sqlite3 as sql
 
@@ -23,10 +24,11 @@ def index():
   con.row_factory = sql.Row
    
   cur = con.cursor()
+
   cur.execute("SELECT DISTINCT * from leaders")
-   
   rows = cur.fetchall();
-  print type(rows)
+  print(type(rows))
+
   return render_template("index.html", rows = rows)
 
 @app.route('/list')
