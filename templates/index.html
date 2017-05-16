@@ -1,11 +1,16 @@
-<!DOCTYPE html>
+{% extends "bootstrap/base.html" %}
+<html>
 <head>
 <title>Executive Gender Gap</title>
-<link rel="stylesheet" type="text/css" href="{{url_for('static',filename='style.css')}}">
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
-        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min.js"></script>
+ {% block styles %} {{super()}}
+ <link rel="stylesheet" type="text/css" href="{{url_for('static',filename='style.css')}}"> 
+ <link rel="stylesheet" type="text/css" href="{{url_for('static',filename='jumbotron-narrow.css')}}"> 
+ {% endblock %}
+{% block scripts %}{{super()}}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min.js"></script>
 <script type="text/javascript" charset="utf-8">
-    $(document).ready(function(){
+$(document).ready(function(){
     var data= getPercentage()
     var width = 1000 //max size of the bubbles
     var height =800
@@ -16,13 +21,13 @@
         .size([width, height])
         .padding(.5);
 
-    var svg = d3.select("body").append("svg")
+    var svg = d3.select("#data-container").append("svg")
         .attr("width", width)
         .attr("height", height)
         .attr("class", "bubble");
    
     // Define the div for the tooltip
-    var div = d3.select("body").append("div")   
+    var div = d3.select("#data-container").append("div")   
         .attr("class", "tooltip")               
         .style("opacity", 0);
         
@@ -99,9 +104,9 @@
     //force layout
     var force = d3.layout.force()
         .gravity(0.1)
-        .charge(function(d, i) { return i ? 0 : -80; })
+        .charge(function(d, i) { return i ? 0 : -70; })
         .nodes(nodes)
-        .size([100, 50]);
+        .size([-100, -50]);
 
     force.start();
 
@@ -204,10 +209,36 @@
     };
 </script>
 
-</head>
+</head>{% endblock %}
+{% block content %}
 <body>
+<div class = "container">
+    <div class="header clearfix">
+        <nav>
+          <ul class="nav nav-pills pull-right">
+            <li role="presentation" class="active"><a href="/">Home</a></li>
+            <li role="presentation"><a href="/list">Database</a></li>
+            <li role="presentation"><a href="/about">About</a></li>
+          </ul>
+        </nav>
+        <h3 class="text-muted">Executive Gender Gap</h3>
+      </div>
 
-<h3> Percentage of Women in Executive Leadership </h3>
-   
+      <div class="row">
+        <!-- <div class="col-lg-4"> -->
+          <div id = "data-container"><br><br>
+        <!-- </div> -->
+      </div><br>
+  
+      </div>
+               
 
+
+      <footer class="footer">
+        <p>&copy; 2017 Rina Schiller</p>
+      </footer>
+
+    </div> <!-- /container -->
 </body>
+{% endblock %} 
+</html>

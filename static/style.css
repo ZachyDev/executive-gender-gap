@@ -1,5 +1,5 @@
 li {
-    font: normal 18px/24px Georgia, "Times New Roman", Palatino, serif;
+    font: normal 18px/24px 'Helvetica Neue', Arial, sans-serif;
     margin: 0 5px 10px 0;
     color: "blue";
 
@@ -10,7 +10,7 @@ div.tooltip {
     width: auto;                    
     height: auto;                   
     padding: 10px;               
-    font: 12px sans-serif;      
+    font: 12px 'Helvetica Neue', sans-serif;      
     background: lightblue; 
     border: 2px black;        
     border-radius: 8px;         
@@ -27,7 +27,7 @@ div.tooltip {
     height: 100%;
     /*border-radius: 10%;*/
     text-align: center;
-    line-height: 200px;
+    /*line-height: 600px;*/
     font-size: 12px;
 }
 .bubble span {

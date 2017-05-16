@@ -12,11 +12,12 @@ import demjson
 import csv
 from getGenders import get_genders
 import sqlite3 as sql
+from flask_bootstrap import Bootstrap
 
 cgitb.enable()
 
 app = Flask(__name__)
-
+Bootstrap(app)
 # routing/mapping a url on website to a python function 
 @app.route('/') #root directory, home page of website, called a decorator
 def index():
