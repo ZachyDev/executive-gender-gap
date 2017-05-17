@@ -14,7 +14,10 @@ $(document).ready(function(){
     var data= getPercentage()
     var width = 1000 //max size of the bubbles
     var height =800
-    color = d3.scale.category20c(); //color category
+    color = d3.scale.linear()
+    .domain([0,40])
+    // .range(["red", "blue"])
+    .range(['#47DFFF', 'green' ]);; //color category
 
     var bubble = d3.layout.pack()
         .sort(null)
