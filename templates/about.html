@@ -1,0 +1,61 @@
+
+{% extends "bootstrap/base.html" %}
+<html>
+<head>
+    <meta charset="UTF-8"> 
+     {% block title %}About Executive Gender Gap{% endblock %}
+    {% block scripts %}{{super()}}<script type="text/javascript" src="//code.jquery.com/jquery-1.4.2.min.js"></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/0.9.16/socket.io.min.js"></script>  
+    <script type="text/javascript" charset="utf-8">
+      
+    </script> {% endblock %}
+    {% block styles %} {{super()}}
+        <link rel="stylesheet" type="text/css" href="{{url_for('static',filename='css/style.css')}}"> 
+        <link rel="stylesheet" type="text/css" href="{{url_for('static',filename='css/jumbotron-narrow.css')}}">   {% endblock %}
+    </head>
+
+   {% block content %}
+   <body>
+    <div class="container">
+      <div class="header clearfix">
+        <nav>
+          <ul class="nav nav-pills pull-right">
+            <li role="presentation" ><a href="/">Home</a></li>
+            <li role="presentation"><a href="/list">Database</a></li>
+            <li role="presentation" class="active"><a href="/about">About</a></li>
+          </ul>
+        </nav>
+        <h3 class="text-muted">Executive Gender Gap</h3>
+      </div>
+
+      <div class="jumbotron">
+        <h1>About Executive Gender Gap </h1>
+        <p class="lead">A project by Rina Schiller</p>
+        
+      </div>
+
+      <div class="row marketing">
+        <div class="col-lg-12">
+          <div style="height: 500px;" ><br><br>
+            <b>About</b>
+            <p><i>Executive Leadership Gap </i> is a project meant to shine a light on the lack of women in executive leadership in the top <a href="https://littlesis.org/lists/110-fortune-1000-companies-2010/members">100 Fortune Companies</a>. The size of each circle represents the precentage of women in the company. If you hover over any of the circles you'll see the exact percentage of women as well as the count for men and women. You can see the entire database and list of names in the database tab. </p>
+              
+            <b>Data</b>
+            <p> In order to compile the data I scraped a website called <a href="https://littlesis.org/">LittleSis.org</a>, "a free database of who-knows-who at the heights of business and government." I went through the list of Fortune 500 Companies, scraping each company and the links to executive leadership within that company. Then I used a Python package called <a href="https://pypi.python.org/pypi/gender-guesser/">gender-guesser</a> which determined the gender of the person based on their first name.</p><br>
+
+            <b>D3.js</b>
+            <p> After collecting the data I calculated the percenage of women in each company. I used <a href="https://d3js.org/">D3.js</a> to create a bubble chart of circles using each company's female percentage as the size of the circle. I used D3's other features like force layouts and gravity to create the animation effects. 
+       
+          </div>
+        </div>
+      </div>
+
+      <footer class="footer">
+        <p>&copy; 2017 Rina Schiller</p>
+      </footer>
+
+    </div> <!-- /container -->
+ 
+    </body>
+   {% endblock %}  
+</html>

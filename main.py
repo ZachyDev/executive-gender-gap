@@ -24,7 +24,6 @@ def index():
   
   con = sql.connect("database.db")
   con.row_factory = sql.Row
-   
   cur = con.cursor()
 
   cur.execute("SELECT DISTINCT * from leaders")
@@ -44,6 +43,10 @@ def list():
    rows = cur.fetchall();
    return render_template("list.html", rows = rows)
 
+@app.route('/about')
+def about():
+   
+   return render_template("about.html")
 if __name__ == "__main__": #only start web server if this file is called directly  
     port = int(os.environ.get('PORT', 5000)) 
     app.run(debug=True, host='0.0.0.0', port=port) #starts app on web server 

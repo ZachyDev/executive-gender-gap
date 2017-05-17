@@ -103,13 +103,15 @@ $(document).ready(function(){
 
     //force layout
     var force = d3.layout.force()
-        .gravity(0.1)
-        .charge(function(d, i) { return i ? 0 : -70; })
+        .gravity(.1)
+        // .friction(.001)
+        // .charge(function(d, i) { return i ? 0 : -70; })
+        .charge(function(d) {return -Math.pow(d.radius, 2.0) / 8;})
         .nodes(nodes)
         .size([-100, -50]);
 
-    force.start();
-
+    var bubbles = svg.selectAll("circle")
+    var texts = svg.selectAll("text")
     var drag = force.drag().on("dragstart", dragstart)
     force.on("tick", function(e) {
       var q = d3.geom.quadtree(nodes),
@@ -118,9 +120,11 @@ $(document).ready(function(){
 
       while (++i < n) q.visit(collide(nodes[i]));
     
-      svg.selectAll("circle").attr("transform", function(d) { return 'translate(' + [d.x, d.y] + ')'; });
-      svg.selectAll("text").attr("transform", function(d) { return 'translate(' + [d.x, d.y] + ')'; });
+      bubbles.attr("transform", function(d) { return 'translate(' + [d.x, d.y] + ')'; });
+      texts.attr("transform", function(d) { return 'translate(' + [d.x, d.y] + ')'; });
     });
+
+    force.start();
 
     svg.on("mousemove", function() {
       var p1 = d3.mouse(this);
@@ -132,6 +136,13 @@ $(document).ready(function(){
     function dragstart(d) {
         d3.select(this).classed("fixed", d.fixed = true);
     }
+
+
+    // function splitBubbles(){
+    //   force.on('tick', function(e) {
+    //     bubbles.each(moveToPercent())
+    //   }
+    // }
     function collide(node) {
       var r = node.radius + 16,
           nx1 = node.x - r,
@@ -171,6 +182,8 @@ $(document).ready(function(){
         '{% for row in rows %}'
             // console.log(company)
             company = '{{row.company}}'
+            company = company.replace("&#39;", "'");
+            company = company.replace(",", "");
             totalCount += 1;    
             '{% if "Female" in row.gender %}'
                 womenCount += 1;
@@ -199,10 +212,14 @@ $(document).ready(function(){
          '{% endfor %}'
         
         for (var i=0;i<zeroCompanies.length;i+=1) {
-            if (zeroCompanies[i].women ==0){
-                console.log(zeroCompanies[i].company);
+            if (zeroCompanies[i].company == 'end'){
+              zeroCompanies.splice(i,1)
             }
+            // console.log(zeroCompanies[i].company)
+            $('#zero-container').append(zeroCompanies[i].company  + '<br>')
         }
+     
+
 
         return companiesData         
  
@@ -229,7 +246,12 @@ $(document).ready(function(){
           <div id = "data-container"><br><br>
         <!-- </div> -->
       </div><br>
-  
+      </div>
+      <div class ="row">
+        <div id="zero-container">
+          <b>Companies with less than 1% women</b><br>
+        </div>
+
       </div>
                
 
