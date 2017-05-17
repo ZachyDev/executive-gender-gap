@@ -2,7 +2,6 @@
 Web scraping data and putting it into database
 Database must have 'end' as last row for frontend
 Replace Andy with Male
-
 """
 
 import urllib2
