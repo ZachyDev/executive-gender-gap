@@ -67,7 +67,7 @@ def get_genders():
             # grab executives, links, and gender if they are current and put them into list
             '''
             for d in py_obj:
-                if d['is_current'] == True and d['is_executive']:
+                if d['is_current'] == True and d['is_executive']==True:
                     # leadershipNames.append(d['related_entity_name'])
                     # personLinks.append(d['related_entity_url'][9:].replace('-', '/',1)) #grab link and edit for scraping
                     name = d['related_entity_name']
@@ -99,4 +99,3 @@ def get_genders():
 
 if __name__ == "__main__":
     leadersDict2 = get_genders()
-    
