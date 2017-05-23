@@ -97,6 +97,7 @@ $(document).ready(function(){
 
     // format the text for each bubble
     bubbles.append("text")
+            .classed('text',true)
             .attr("x", function(d){ return d.x; })
             .attr("y", function(d){ return d.y + 5; })
             .attr("text-anchor", "middle")
@@ -151,6 +152,7 @@ $(document).ready(function(){
           .transition()
           .attr('cx', function(d) {return d.x;})
           .attr('cy', function(d) {return d.y;})
+        $('.text').hide(100)
       })
       force.start()
     }
@@ -174,6 +176,8 @@ $(document).ready(function(){
           .transition()
           .attr('cx', function(d) {return d.x;})
           .attr('cy', function(d) {return d.y;})
+          $('.text').hide(100)
+
 ;
 
       });
