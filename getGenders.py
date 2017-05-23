@@ -20,7 +20,7 @@ cur = conn.cursor()
 # cur.execute('DROP TABLE leaders')
 #
 cur.execute("""CREATE TABLE IF NOT EXISTS leaders(company text, name text, link text, gender text)""")
-cur.execute("INSERT INTO leaders (company, name,link,gender) VALUES (?,?,?,?)""",("end", "end", "end", "end"))
+# cur.execute("INSERT INTO leaders (company, name,link,gender) VALUES (?,?,?,?)""",("end", "end", "end", "end"))
 # cur.execute("UPDATE leaders SET gender = 'Male' WHERE gender='Andy'")
 # cur.execute('DELETE FROM leaders WHERE name="end"')
 conn.commit()
@@ -68,8 +68,6 @@ def get_genders():
             '''
             for d in py_obj:
                 if d['is_current'] == True and d['is_executive']==True:
-                    # leadershipNames.append(d['related_entity_name'])
-                    # personLinks.append(d['related_entity_url'][9:].replace('-', '/',1)) #grab link and edit for scraping
                     name = d['related_entity_name']
                     link = d['related_entity_url'][9:-14].replace('-', '/',1)
                     company = companyLinks[i][0]
@@ -85,7 +83,7 @@ def get_genders():
                     try:
                         with sql.connect('database.db') as con:                            
                             cur = con.cursor()
-                            # cur.execute("""INSERT INTO leaders (company, name,link,gender) VALUES (?,?,?,?)""",(company, name, link,gender))
+                            cur.execute("""INSERT INTO leaders (company, name,link,gender) VALUES (?,?,?,?)""",(company, name, link,gender))
                             print('insert ' + company)
                             con.commit()
                     except:

@@ -11,7 +11,8 @@
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min.js"></script>
 <script type="text/javascript" charset="utf-8">
 $(document).ready(function(){
-    var data= getPercentage()
+    var data= getPercentage();
+    
     var width = 1000 //max size of the bubbles
     var height =800
     color = d3.scale.linear()
@@ -54,15 +55,12 @@ $(document).ready(function(){
         .nodes(nodes)
         .friction(0.9);
 
-
     //setup the chart
     var bubbles = svg.append("g")
         .attr("transform", "translate(0,0)")
         .selectAll(".bubble")
         .data(nodes)
-        .enter()
-
-        ;
+        .enter();
 
     //create the bubbles
     bubbles.append("circle")
@@ -118,8 +116,6 @@ $(document).ready(function(){
    
     var texts = svg.selectAll("text")
     var bubbles = svg.selectAll(".bubble")
-
-    // groupBubbles();
    
     force.on("tick", function(e) {
       bubbles.attr("transform", function(d) { return 'translate(' + [d.x, d.y] + ')'; });
@@ -145,8 +141,14 @@ $(document).ready(function(){
 
     function groupBubbles() {
       force.on('tick', function(e){
+        var q = d3.geom.quadtree(bubbles),
+            i = 0,
+            n = bubbles.length;
+        while (++i < n) {
+          q.visit(collide(bubbles[i]));
+        }
         bubbles.each(moveToCenter(e.alpha))
-          // .transition()
+          .transition()
           .attr('cx', function(d) {return d.x;})
           .attr('cy', function(d) {return d.y;})
       })
@@ -170,7 +172,6 @@ $(document).ready(function(){
         }
           bubbles.each(moveToSplit(e.alpha))
           .transition()
-          // .attr("transform", function(d) { return 'translate(' + [d.x-500, d.y-400] + ')'; })
           .attr('cx', function(d) {return d.x;})
           .attr('cy', function(d) {return d.y;})
 ;
@@ -281,7 +282,6 @@ function collide(node) {
             $('#zero-container').append(zeroCompanies[i].company  + '<br>')
         }
      
-
 
         return companiesData         
  
