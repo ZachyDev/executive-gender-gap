@@ -4,7 +4,7 @@ li {
     color: "blue";
 
 }
-tools {   
+div.tooltip {   
     position: absolute;         
     text-align: center;         
     width: auto;                    
