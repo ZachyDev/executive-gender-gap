@@ -38,13 +38,9 @@ $(document).ready(function(){
     data = data.map(function(d){ d.value =+ d["percentage"]; return d; });
 
     //bubbles needs very specific format, convert data to this.
-    var nodes = bubble.nodes({children:data}).filter(function(d) { return !d.children; });
-        // root = d3.mouse;
-
+    var nodes = bubble.nodes({children:data}).filter(function(d) { return !d.children; }), root = d3.mouse;
     // root.radius = 0;
     // root.fixed = true;
-  
-     // Charge Function
     function charge(d) {
       return -Math.pow(d.radius/2, 2.0) / 8;
     }
@@ -75,7 +71,7 @@ $(document).ready(function(){
             div.transition()        
                 .duration(100)      
                 .style("opacity", 1)       
-            div.html(d.company + "<br>" + d.percentage + "% Female<br>Men: " + d.men + "<br>Women: " + d.women)  
+            div.html(d.company + "<br>" + d.percentage + "% Female<br>" + d.menPercentage + "% Male<br>")  
                 .style("left", (d3.event.pageX) + "px")     
                 .style("top", (d3.event.pageY - 28) + "px");    
             d3.select(this)
@@ -125,36 +121,44 @@ $(document).ready(function(){
 
     force.start();
 
-    // svg.on("mousemove", function() {
-    //   var p1 = d3.mouse(this);
-    //   root.px = p1[0];
-    //   root.py = p1[1];
-    //   force.resume();
-    // });
 
-    var splitCenters = {
-      1: { x: width/3, y: height / 2 },
-      2: { x: width/2, y: height / 2 },
-      3: { x: 2* width/3, y: height/ 2 }
-    };
+    function menPercentage(){
+      color = d3.scale.linear()
+        .domain([100,0])  
+        .range(['red', '#3e2323' ]);;
 
+        bubbles.transition()
+          .attr('r', function(d){return d.menPercentage/2})
+          .style("fill", function(d) { return color(d.value);})
+      };
+
+    function womenPercentage(){
+      color = d3.scale.linear()
+        .domain([0,40]) //map colors based on value
+        .range(['#47DFFF', 'green' ]);;
+      bubbles.transition()
+        .attr('r', function(d) {return d.r})
+        .style("fill", function(d) { return color(d.value);})
+    }
+
+      svg.on("mousemove", function() {
+      var p1 = d3.mouse(this);
+      root.px = p1[0];
+      root.py = p1[1];
+      force.resume();
+    });
     var center = {x: width/2, y: height/2}
 
     function groupBubbles() {
       force.on('tick', function(e){
-        var q = d3.geom.quadtree(bubbles),
-            i = 0,
-            n = bubbles.length;
-        while (++i < n) {
-          q.visit(collide(bubbles[i]));
-        }
         bubbles.each(moveToCenter(e.alpha))
           .transition()
           .attr('cx', function(d) {return d.x;})
           .attr('cy', function(d) {return d.y;})
-        $('.text').hide(100)
       })
+      $('.text').hide()
       force.start()
+
     }
 
     function moveToCenter(alpha){
@@ -164,74 +168,12 @@ $(document).ready(function(){
       };
     }
 
-    function splitBubbles() {
-      force.on('tick', function(e) {
-            var q = d3.geom.quadtree(bubbles),
-            i = 0,
-            n = bubbles.length;
-        while (++i < n) {
-          q.visit(collide(bubbles[i]));
-        }
-          bubbles.each(moveToSplit(e.alpha))
-          .transition()
-          .attr('cx', function(d) {return d.x;})
-          .attr('cy', function(d) {return d.y;})
-          $('.text').hide(100)
-
-;
-
-      });
-
-    force.start()
-    }
-
-    function moveToSplit(alpha){
-      return function(d){
-        // console.log(d.percentage)
-        var target;
-        if (d.percentage <= 10) {
-              target = splitCenters[1]
-            }
-            else if (d.percentage > 10 && d.percentage< 20){
-              target = splitCenters[2]
-            }
-            else {
-              target = splitCenters[3]
-            }
-        d.x = d.x + (target.x-d.x) 
-        d.y = target.y 
-      }
-    }
-
-    $("#splitBubbles").click(splitBubbles)
+  
     $("#groupBubbles").click(groupBubbles)
 
-
-function collide(node) {
-  var r = node.radius + 16,
-      nx1 = node.x - r,
-      nx2 = node.x + r,
-      ny1 = node.y - r,
-      ny2 = node.y + r;
-  return function(quad, x1, y1, x2, y2) {
-    if (quad.point && (quad.point !== node)) {
-      var x = node.x - quad.point.x,
-          y = node.y - quad.point.y,
-          l = Math.sqrt(x * x + y * y),
-          r = node.radius + quad.point.radius;
-      if (l < r) {
-        l = (l - r) / l * .5;
-        node.x -= x *= l;
-        node.y -= y *= l;
-        quad.point.x += x;
-        quad.point.y += y;
-      }
-    }
-    return x1 > nx2 || x2 < nx1 || y1 > ny2 || y2 < ny1;
-  };
-}
-
-
+    
+    $("#menPercentage").click(menPercentage)
+    $("#womenPercentage").click(womenPercentage)
 
     });
     
@@ -264,7 +206,7 @@ function collide(node) {
             if (company != previousCompany){
                 var percentage = Math.round(womenCount/totalCount * 100)
                 if (percentage!=0){
-                    companiesData.push( {"company": previousCompany, "total": totalCount, "women": womenCount, "men": menCount, "unknown": unknownCount, "percentage": percentage})
+                    companiesData.push( {"company": previousCompany, "total": totalCount, "women": womenCount, "men": menCount, "unknown": unknownCount, "percentage": percentage, "menPercentage": 100-percentage})
                 }
                 else {
                     zeroCompanies.push( {"company": previousCompany, "total": totalCount, "women": womenCount, "men": menCount, "unknown": unknownCount, "percentage": percentage})
@@ -307,8 +249,12 @@ function collide(node) {
         <h3 class="text-muted">Executive Gender Gap</h3>
       </div>
       <br>
-      <button id="splitBubbles">Split</button>
-      <button id="groupBubbles">Group</button>
+    
+      
+      <button id="menPercentage">Men</button>
+
+      <button id="womenPercentage">Women</button>
+      <button id="groupBubbles">Unite</button>
       <div class="row">
         <!-- <div class="col-lg-4"> -->
           <div id = "data-container"><br><br>

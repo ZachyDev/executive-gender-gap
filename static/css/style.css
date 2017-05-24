@@ -4,14 +4,15 @@ li {
     color: "blue";
 
 }
-div.tooltip {   
+tools {   
     position: absolute;         
     text-align: center;         
     width: auto;                    
     height: auto;                   
-    padding: 10px;               
-    font: 12px 'Helvetica Neue', sans-serif;      
-    background: lightblue; 
+    padding: 10px;     
+    color: 'white';          
+    font: 15px 'Helvetica Neue', sans-serif;      
+    background: darkgrey; 
     border: 2px black;        
     border-radius: 8px;         
     pointer-events: none;           
