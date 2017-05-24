@@ -9,10 +9,9 @@ div.tooltip {
     text-align: center;         
     width: auto;                    
     height: auto;                   
-    padding: 10px;     
-    color: 'white';          
-    font: 15px 'Helvetica Neue', sans-serif;      
-    background: darkgrey; 
+    padding: 10px;               
+    font: 12px 'Helvetica Neue', sans-serif;      
+    background: lightblue; 
     border: 2px black;        
     border-radius: 8px;         
     pointer-events: none;           
