@@ -210,7 +210,9 @@ $(document).ready(function(){
                     companiesData.push( {"company": previousCompany, "total": totalCount, "women": womenCount, "men": menCount, "unknown": unknownCount, "percentage": percentage, "menPercentage": 100-percentage})
                 }
                 else {
+                  if (totalCount != 1){ //if enough data
                     zeroCompanies.push( {"company": previousCompany, "total": totalCount, "women": womenCount, "men": menCount, "unknown": unknownCount, "percentage": percentage})
+                  }
                 }
                 
                 totalCount = 0;
@@ -220,13 +222,26 @@ $(document).ready(function(){
             };
             previousCompany = company
          '{% endfor %}'
-        
-        for (var i=0;i<zeroCompanies.length;i+=1) {
-            if (zeroCompanies[i].company == 'end'){
-              zeroCompanies.splice(i,1)
+      
+        //cleaning up data
+        for (var i=0; i<zeroCompanies.length; i++) {
+          var username;
+            
+            if (zeroCompanies[i].company == 'Ford Motor'){
+              username = 'Ford'
             }
-            // console.log(zeroCompanies[i].company)
-            $('#zero-container').append(zeroCompanies[i].company  + '<br>')
+            else if (zeroCompanies[i].company == 'Costco Wholesale Corporation'){
+              username = 'Costco'
+            }
+            else if (zeroCompanies[i].company == 'Emerson Electric'){
+              username = 'Emerson_Careers'
+            }
+            else if (zeroCompanies[i].company == 'Sysco'){
+              username = 'Sysco'
+            }
+            
+            var tweetlink = '<a href=\"http://twitter.com/home?status=@' + username + ' Your company has less than 1 percent female executives. %23DoMore - Check out %23ExecutiveGenderGap for details http://bit.ly/2rI4sJE\">'+zeroCompanies[i].company+'</a>'
+            $('#zero-container').append(tweetlink + '<br>')
         }
      
 
